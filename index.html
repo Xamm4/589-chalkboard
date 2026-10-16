@@ -1,0 +1,159 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <title>Chalkboard Rebel: 589 Lines</title>
+  <meta name="description" content="You're in detention. Write the line he wants... or sneak the one you believe in. A one-button game for the $589 community." />
+  <meta name="theme-color" content="#14213d" />
+  <meta property="og:title" content="Chalkboard Rebel: 589 Lines" />
+  <meta property="og:description" content="Hold to write XRP TO HIT $589+ BY EOY. Let go before the Regulator looks up." />
+  <meta property="og:image" content="assets/img/og.png" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <link rel="icon" type="image/png" href="assets/img/favicon.png" />
+  <link rel="apple-touch-icon" href="assets/img/favicon.png" />
+  <link rel="preload" href="assets/fonts/CabinSketch-Bold.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/LuckiestGuy-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="preload" href="assets/fonts/GochiHand-Regular.woff2" as="font" type="font/woff2" crossorigin />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main id="stage">
+    <div id="frame">
+      <canvas id="game" role="img" aria-label="Chalkboard Rebel. Press and hold anywhere, or hold Space, to sneak the rebel line onto the board. Let go before the teacher looks."></canvas>
+      <div id="ui">
+        <section id="loading" class="screen show" aria-label="Loading">
+          <div class="loading-box">
+            <div class="chalk-title">CHALKBOARD REBEL</div>
+            <div class="loading-bar"><div id="loading-fill"></div></div>
+            <div class="loading-note">sharpening the chalk…</div>
+          </div>
+        </section>
+
+        <button id="btn-pause" class="hud-btn" type="button" aria-label="Pause" hidden>
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="4" width="5" height="16" rx="1.5"/><rect x="14" y="4" width="5" height="16" rx="1.5"/></svg>
+        </button>
+
+        <button id="btn-plane" class="plane-btn" type="button" aria-label="Throw the paper airplane (key A)" hidden>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><path d="M44 6 4 22l14 5 3 14 7-9 10 7z" fill="#fbfaf4" stroke="#1d130d" stroke-width="3" stroke-linejoin="round"/><path d="M18 27 44 6 21 41" fill="none" stroke="#1d130d" stroke-width="2.5" stroke-linejoin="round"/></svg>
+          <span>THROW!</span>
+        </button>
+
+        <section id="title" class="screen" aria-labelledby="logo">
+          <h1 id="logo" class="logo">
+            <span class="logo-1">CHALKBOARD</span>
+            <span class="logo-2">REBEL</span>
+          </h1>
+          <div class="logo-sub">589 LINES</div>
+          <div class="title-actions">
+            <button id="btn-play" class="btn btn-play" type="button">PLAY</button>
+            <div class="row">
+              <button id="btn-howto" class="btn btn-cream" type="button">HOW TO PLAY</button>
+              <button id="btn-mute" class="btn btn-icon btn-cream" type="button" aria-label="Sound on" aria-pressed="false">
+                <svg class="ico-on" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16 8.5a5 5 0 0 1 0 7M18.5 6a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+                <svg class="ico-off" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="m16 9 6 6m0-6-6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+              </button>
+            </div>
+          </div>
+          <div class="title-stats">
+            <div class="stats-line">
+              <div><span class="lbl">BEST</span> <b id="t-best">0</b></div>
+              <div><span class="lbl">RUNS</span> <b id="t-runs">0</b></div>
+              <div><span class="lbl">LIFETIME</span> <b><span id="t-life">0</span>/589</b></div>
+            </div>
+            <div class="lifetime">
+              <div class="meter"><div id="t-life-bar" class="meter-fill"></div></div>
+              <div id="t-golden-note" class="lifetime-note">Sneak 589 lifetime lines to unlock <em>GOLDEN CHALK</em></div>
+              <button id="btn-golden" class="btn-link" type="button" hidden>GOLDEN CHALK: ON</button>
+            </div>
+          </div>
+        </section>
+
+        <section id="howto" class="screen dim" aria-labelledby="howto-h">
+          <div class="panel howto-panel">
+            <h2 id="howto-h">HOW TO PLAY</h2>
+            <div class="howto-card">
+              <div class="howto-art art-hold">
+                <div class="mini-board"><span class="rebel">XRP TO HIT $589+</span></div>
+                <div class="finger down"></div>
+              </div>
+              <div class="howto-text"><b>HOLD</b> anywhere to sneak the rebel line. Letters = points.</div>
+            </div>
+            <div class="howto-card">
+              <div class="howto-art art-release">
+                <div class="mini-board"><span class="punish">I will not shill $589</span></div>
+                <div class="finger up"></div>
+              </div>
+              <div class="howto-text"><b>LET GO</b> to write your punishment. Safe, and it fills the daily quota.</div>
+            </div>
+            <div class="howto-card">
+              <div class="howto-art art-caught">
+                <img src="assets/img/regulator_angry.png" alt="" width="84" height="88" />
+                <div class="eye-ico"></div>
+              </div>
+              <div class="howto-text"><b>DON'T GET CAUGHT.</b> When the Regulator looks up, your hand had better be down. 3 strikes = Principal.</div>
+            </div>
+            <ul class="howto-tips">
+              <li><b>Rustle, ahem, newspaper lowers</b> = he's about to look.</li>
+              <li><b>SO CLOSE!</b> Let go at the last instant for big points.</li>
+              <li><b>Gold line</b> = ×3. <b>Paper airplane</b> = 3s distraction.</li>
+            </ul>
+            <button id="btn-howto-ok" class="btn btn-play btn-med" type="button">GOT IT!</button>
+          </div>
+        </section>
+
+        <section id="pause" class="screen dim" aria-labelledby="pause-h">
+          <div class="panel pause-panel">
+            <h2 id="pause-h">PAUSED</h2>
+            <button id="btn-resume" class="btn btn-play btn-med" type="button">RESUME</button>
+            <button id="btn-sound2" class="btn btn-cream" type="button">SOUND: ON</button>
+            <button id="btn-quit" class="btn btn-cream" type="button">QUIT TO MENU</button>
+          </div>
+        </section>
+
+        <section id="results" class="screen dim" aria-labelledby="res-h">
+          <div class="results">
+            <h2 id="res-h" class="res-banner">SENT TO THE PRINCIPAL!</h2>
+            <div class="res-board-wrap"><canvas id="res-board" aria-label="Your chalkboard"></canvas></div>
+            <div class="res-title"><span class="lbl">TITLE EARNED</span><b id="res-title">Professional Shiller</b></div>
+            <div class="res-hero"><b id="res-lines">0</b><span>BULLISH LINES SNUCK</span></div>
+            <div class="res-grid">
+              <div><span class="lbl">SCORE</span><b id="res-score">0</b><i id="res-best" class="badge" hidden>NEW BEST!</i></div>
+              <div><span class="lbl">BEST STREAK</span><b id="res-streak">0</b></div>
+              <div><span class="lbl">CLOSE CALLS</span><b id="res-close">0</b></div>
+              <div><span class="lbl">DAY REACHED</span><b id="res-day">Monday</b></div>
+            </div>
+            <div class="lifetime res-life">
+              <div class="lifetime-head"><span id="res-life-label">LIFETIME LINES</span><b><span id="res-life">0</span> / 589</b></div>
+              <div class="meter"><div id="res-life-bar" class="meter-fill"></div></div>
+            </div>
+            <div class="res-actions">
+              <button id="btn-again" class="btn btn-play" type="button">PLAY AGAIN</button>
+              <button id="btn-overtime" class="btn btn-cream btn-overtime" type="button" hidden>OVERTIME »</button>
+            </div>
+            <div class="res-row">
+              <button id="btn-share" class="btn btn-x" type="button">SHARE ON X</button>
+              <button id="btn-copy" class="btn btn-cream" type="button">COPY</button>
+              <button id="btn-menu" class="btn btn-cream" type="button">MENU</button>
+            </div>
+          </div>
+        </section>
+
+        <div id="unlock" class="unlock" hidden>
+          <div class="unlock-card panel">
+            <div class="unlock-kicker">589 LIFETIME LINES!</div>
+            <div class="unlock-title">GOLDEN CHALK UNLOCKED</div>
+            <div class="unlock-sample">XRP TO HIT $589+ BY EOY</div>
+            <button id="btn-unlock-ok" class="btn btn-play btn-med" type="button">SHINY!</button>
+          </div>
+        </div>
+
+        <div id="toast" role="status" aria-live="polite"></div>
+        <div id="sr-live" class="sr-only" aria-live="assertive"></div>
+      </div>
+    </div>
+  </main>
+  <div id="debug" hidden></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+</html>
