@@ -46,7 +46,7 @@ States: `READING → TELL → LOOKING → RETURNING → READING`, plus `FAKE_TEL
 3. Newspaper **lowers slowly**, his eyebrows appear above it.
 4. On later days: footsteps from the hallway, his **reflection** in the window, his **shadow** moving on the wall.
 
-**Faces (provided assets):** `smug` (reading/peeking), `angry` (caught you), `shock` (fake-out / surprised), `grin` (smug satisfaction when you get a strike), `ko` (defeated — you reached EOY). Swap faces with a tiny squash/stretch pop.
+**Faces (provided assets — full-resolution uncropped heads on transparent background, `assets/img/regulator_*.png`; draw them as-is, never inside circles or frames):** `smug` (reading/peeking), `angry` (caught you), `shock` (fake-out / surprised), `grin` (smug satisfaction when you get a strike), `ko` (defeated — you reached EOY). Swap faces with a tiny squash/stretch pop.
 
 **Danger readout:** a subtle "eye" indicator near the top HUD that fills during TELL (also conveyed by shape and pulsing, not just color — colorblind safe).
 
@@ -160,7 +160,7 @@ Synthesize with WebAudio by default (no big files):
   ```
   /index.html
   /src/main.js, config.js, game.js, teacher.js, writing.js, events.js, render/*.js, audio.js, ui.js, storage.js, rng.js
-  /assets/img/  (mascot_back.png [provided], regulator_{smug,angry,shock,grin,ko}.webp, coin_portrait.webp, bear.png …)
+  /assets/img/  (mascot_back.png [provided], regulator_{smug,angry,shock,grin,ko}.png, coin_portrait.webp, bear.png …)
   /assets/sfx/  (optional mp3s)
   /assets/fonts/ (self-hosted + LICENSE)
   /tests/
