@@ -88,7 +88,7 @@ One-time setup: **Settings → Pages → Build and deployment → Source: GitHub
 
 `.github/workflows/ci.yml` runs unit tests, a balance smoke test and the Playwright suite on every push and PR.
 
-Deployed payload is about 1 MB: art, three subset fonts and code.
+The game loads about 1 MB (art, three subset fonts and code). The deployed folder is 1.4 MB because it also holds the social-card image.
 
 ## Project structure
 
