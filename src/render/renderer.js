@@ -16,6 +16,28 @@ import { PHASE, dayParams } from '../game.js';
 import { T } from '../teacher.js';
 
 const DESK_FOOT_Y = 800;
+// What the Regulator has to say about all this.
+const LINES = {
+  caught: ['I SAW THAT!', 'SHILLING?! IN MY CLASS?!', 'NOT FINANCIAL ADVICE, HUH?', '$589?! DREAM ON!', 'EOY? MORE LIKE DETENTION!', 'CAUGHT YOU, REBEL!'],
+  snitch: ['THANK YOU, BEAR.', 'GOOD BEAR.'],
+  quota: ["WHERE'S MY PUNISHMENT?!"],
+  over: ["PRINCIPAL'S OFFICE. NOW."],
+  win: ['THE CHART... IT WAS RIGHT...'],
+  close: ['HM?! I COULD HAVE SWORN...', 'WAS HE... NO.', 'HMMM...?'],
+  plane: ['OOH! A PLANE!', 'WHO THREW THAT?!'],
+  day: {
+    mon: '100 LINES. NO SHILLING.',
+    tue: "I'M WATCHING YOU...",
+    wed: '*SLURP* MORE COFFEE.',
+    thu: 'THE WALLS HAVE EYES.',
+    fri: 'ALMOST WEEKEND. ALMOST.',
+    eoy: 'FINAL EXAM. NO MERCY.',
+    ot: 'STILL HERE?!',
+  },
+};
+const pickLine = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const STREAK_WORDS = { 1.5: 'NICE', 2: 'BULLISH', 3: 'MOON MODE', 5: 'TO THE MOON' };
+
 // Visual captions for every audio tell: readable with the sound off.
 const CAPTIONS = {
   rustle: '*rustle*',
@@ -52,6 +74,12 @@ export class Renderer {
     this.prevDay = null;
     this.ko = 0;
     this.danger = 0;
+    this.speech = null;
+    this.mascotShout = null;
+  }
+
+  say(text, dur = 1.6, delay = 0) {
+    this.speech = { text, t0: (this.time || 0) + delay, dur };
   }
 
   setReducedMotion(on) {
@@ -105,6 +133,7 @@ export class Renderer {
         const end = br.glyphPos(d.line, d.line.text.length - 1);
         const label = d.mult > 1 ? `+${d.points}  ×${d.mult}` : `+${d.points}`;
         fx.text(label, Math.min(end.x - 20, W - 110), end.y - 16, { size: d.golden ? 34 : 28, color: d.golden ? '#ffd23f' : '#fff6dc' });
+        if (STREAK_WORDS[d.mult]) fx.text(STREAK_WORDS[d.mult], Math.min(end.x - 20, W - 110), end.y + 18, { size: 20, color: d.mult >= 3 ? '#ffd23f' : '#bfe8ff', vy: -20, max: 1.2, font: 'display' });
         fx.sparkle(end.x, end.y, d.golden ? 18 : 8, d.golden ? '255,214,92' : '255,255,240');
         if (d.golden) {
           fx.banner('GOLDEN LINE!', 'gold', { y: H * 0.36, sub: `+${d.points}` });
@@ -134,6 +163,8 @@ export class Renderer {
         fx.flashScreen(0.35, '255,215,80');
         fx.slowmo = 0.32;
         this.teacher.onCloseCall();
+        this.say(pickLine(LINES.close), 1.2, 0.15);
+        buzz(30);
         break;
       }
       case 'caught': {
@@ -141,6 +172,9 @@ export class Renderer {
         fx.zoomTo(1.16, (cur.x + TEACHER.x) / 2, (cur.y + TEACHER.headY + 60) / 2);
         fx.flashScreen(0.5, '255,80,60');
         this.caughtFx = { slam: false, stamp: false, strike: false };
+        this.say(d.reason === 'snitch' ? pickLine(LINES.snitch) : pickLine(LINES.caught), 1.5, 0.3);
+        this.mascotShout = { text: '!!', t0: this.time || 0 };
+        buzz([60, 40, 90]);
         break;
       }
       case 'snitch':
@@ -161,17 +195,22 @@ export class Renderer {
         break;
       case 'airplaneThrow':
         fx.banner('DISTRACTION!', 'info', { y: H * 0.38, max: 1.0 });
+        this.say(pickLine(LINES.plane), 1.4, 0.2);
         fx.dust(352, 530, 6);
         break;
       case 'boardFull':
         br.startWipe(game, this.time || 0);
         fx.banner('FULL BOARD!', 'gold', { y: H * 0.3, sub: `+${d.bonus}`, max: 1.6 });
-        fx.zoomTo(0.97, W / 2, H * 0.3);
+        fx.zoomTo(1.04, W / 2, H * 0.3);
         setTimeout(() => this.fx.zoomTo(1), 600);
         break;
       case 'bell':
         this.clockRing = 1.4;
         fx.banner(d.missed ? 'BELL! QUOTA MISSED!' : 'BELL! DAY SURVIVED!', d.missed ? 'bad' : 'info', { y: H * 0.38, max: 1.6, sub: d.missed ? '+1 STRIKE' : '' });
+        if (d.missed) {
+          this.say(LINES.quota[0], 1.6, 0.2);
+          buzz([60, 40, 90]);
+        }
         break;
       case 'quotaMet':
         break;
@@ -180,18 +219,29 @@ export class Renderer {
         if (this.tutorial && d.count === 1) fx.text('QUOTA +1', PUNISH.tallyX, PUNISH.top - 8, { size: 20, max: 1.6, vy: -14 });
         break;
       }
+      case 'dayStart': {
+        const id = d.day.overtime ? 'ot' : d.day.id;
+        if (LINES.day[id]) this.say(LINES.day[id], 1.7, 0.25);
+        break;
+      }
+      case 'fakeOut':
+        this.caption = { text: '*page flip*', t0: this.time || 0, quiet: true };
+        break;
       case 'dayCard':
+        this.speech = null;
         this.prevDay = game.dayIndex > 0 && !(game.overtime && game.dayIndex === this.cfg.days.length) ? dayParams(this.cfg, game.dayIndex - 1) : null;
         fx.zoomTo(1);
         break;
       case 'gameOver':
         fx.banner('SENT TO THE PRINCIPAL!', 'caught', { y: H * 0.42, max: 2.3, size: 40 });
         fx.shake(0.5);
+        this.say(LINES.over[0], 2.2, 0.5);
         break;
       case 'eoyWin':
         fx.confetti(160);
         fx.banner('EOY REACHED!', 'win', { y: H * 0.38, max: 3.0, sub: 'THE REGULATOR IS DEFEATED' });
         fx.flashScreen(0.6, '255,230,150');
+        this.say(LINES.win[0], 2.6, 0.6);
         break;
       case 'runStart':
         this.board.version = -1;
@@ -315,6 +365,9 @@ export class Renderer {
     if (mode === 'walk') drawStand();
     if (pointer) drawPointerEraser(ctx, pointer.hx, pointer.hy, pointer.ex, pointer.ey);
     this.drawCaption(ctx, game, t);
+    this.drawSpeech(ctx, game, t);
+    this.drawMascotShout(ctx, t);
+    this.drawCountdown(ctx, game, t);
     if (game.phase === PHASE.WIN || (game.phase === PHASE.RESULTS && game.won)) this.drawKoStars(ctx, game, t);
 
     drawPlane(ctx, plane, t);
@@ -358,7 +411,7 @@ export class Renderer {
     const fx = this.fx;
     if (!cf.slam && ct >= this.cfg.timing.caughtFreeze) {
       cf.slam = true;
-      fx.banner(game.caughtReason === 'snitch' ? 'SNITCHED!' : 'CAUGHT!', 'caught', { y: H * 0.42, max: 1.1 });
+      fx.banner(game.caughtReason === 'snitch' ? 'SNITCHED!' : 'CAUGHT!', 'caught', { y: H * 0.3, max: 1.1 });
       fx.shake(0.75);
       fx.dust(TEACHER.x, 790, 10, { size: 8 });
     }
@@ -390,8 +443,8 @@ export class Renderer {
     const reading = tch.state === T.READING;
     const needHold = reading && !game.holding && (this.tutorialHeld < 1.2 || this.idleNoHold > 2.5);
     if (needHold) {
-      const x = W / 2 + 10;
-      const y = 640;
+      const x = INNER.x + INNER.w / 2;
+      const y = 330;
       const p = (t * 1.6) % 1;
       ctx.save();
       ctx.strokeStyle = `rgba(255,255,255,${0.8 * (1 - p)})`;
@@ -407,7 +460,7 @@ export class Renderer {
       ctx.strokeStyle = INK;
       ctx.stroke();
       ctx.restore();
-      bubble(ctx, x, y - 62, 'HOLD TO WRITE', 22, '#ffd23f');
+      bubble(ctx, x, y - 64, 'HOLD ANYWHERE TO WRITE', 22, '#ffd23f');
     }
     const danger = tch.state === T.TELL || tch.state === T.FAKE_TELL || (tch.state === T.LOOKING && !tch.seeing);
     if (danger && game.holding) {
@@ -440,6 +493,83 @@ export class Renderer {
     ctx.restore();
   }
 
+  teacherHeadPos(game) {
+    const tv = this.teacher;
+    if (tv.storm && tv.storm.standing) {
+      const footY = tv.mode === 'walk' ? WALK_FOOT_Y : DESK_FOOT_Y;
+      return { x: tv.storm.x, y: footY - 360 };
+    }
+    if (tv.mode === 'walk') return { x: tv.standX, y: WALK_FOOT_Y - 360 };
+    return { x: TEACHER.x, y: TEACHER.headY - 14 };
+  }
+
+  drawSpeech(ctx, game, t) {
+    const sp = this.speech;
+    if (!sp) return;
+    const age = t - sp.t0;
+    if (age < 0) return;
+    if (age > sp.dur) {
+      this.speech = null;
+      return;
+    }
+    const head = this.teacherHeadPos(game);
+    const pop = age < 0.14 ? 0.5 + (age / 0.14) * 0.6 : age < 0.24 ? 1.1 - ((age - 0.14) / 0.1) * 0.1 : 1;
+    ctx.save();
+    ctx.globalAlpha = age > sp.dur - 0.2 ? (sp.dur - age) / 0.2 : 1;
+    ctx.font = `17px ${FONTS.display}`;
+    const w = ctx.measureText(sp.text).width + 30;
+    const x = Math.max(w / 2 + 8, Math.min(W - w / 2 - 8, head.x - 40));
+    ctx.translate(x, head.y);
+    ctx.scale(pop, pop);
+    bubble(ctx, 0, 0, sp.text, 17, '#ffffff');
+    ctx.restore();
+  }
+
+  drawMascotShout(ctx, t) {
+    const m = this.mascotShout;
+    if (!m) return;
+    const age = t - m.t0;
+    if (age > 1.2) {
+      this.mascotShout = null;
+      return;
+    }
+    const y = MASCOT.y - 28 - Math.min(1, age * 8) * 14;
+    ctx.save();
+    ctx.globalAlpha = age > 1 ? (1.2 - age) / 0.2 : 1;
+    ctx.font = `38px ${FONTS.display}`;
+    ctx.textAlign = 'center';
+    ctx.lineWidth = 7;
+    ctx.strokeStyle = INK;
+    ctx.lineJoin = 'round';
+    ctx.strokeText(m.text, MASCOT.x + 70, y);
+    ctx.fillStyle = '#ff5a4a';
+    ctx.fillText(m.text, MASCOT.x + 70, y);
+    ctx.restore();
+  }
+
+  drawCountdown(ctx, game, t) {
+    if (game.phase !== PHASE.PLAY) return;
+    const left = game.dayLeft;
+    if (left > 5 || left <= 0) return;
+    const n = Math.ceil(left);
+    const k = n - left; // 0 → 1 within each second
+    const s = 1.5 - Math.min(1, k * 4) * 0.5;
+    ctx.save();
+    ctx.translate(484, 186);
+    ctx.scale(s, s);
+    ctx.globalAlpha = 1 - k * 0.6;
+    ctx.font = `46px ${FONTS.display}`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.lineWidth = 8;
+    ctx.lineJoin = 'round';
+    ctx.strokeStyle = INK;
+    ctx.strokeText(String(n), 0, 0);
+    ctx.fillStyle = game.quota && game.punishToday < game.quota ? '#ff6b5b' : '#ffd23f';
+    ctx.fillText(String(n), 0, 0);
+    ctx.restore();
+  }
+
   drawCursor(ctx, game, t) {
     if (game.phase !== PHASE.PLAY) return;
     let p = null;
@@ -448,6 +578,9 @@ export class Renderer {
     if (!p) return;
     const big = game.isWritingRebel;
     const a = 0.5 + 0.5 * Math.sin(t * 30);
+    if (big && game.streak >= 4 && Math.random() < 0.5) {
+      this.fx.sparkle(p.x, p.y, 1, Math.random() < 0.5 ? '255,150,40' : '255,214,92');
+    }
     ctx.save();
     ctx.globalAlpha = big ? 0.55 + a * 0.45 : 0.35;
     const g = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, big ? 14 : 8);
@@ -556,6 +689,14 @@ export class Renderer {
       ctx.fill();
     }
     ctx.restore();
+  }
+}
+
+function buzz(pattern) {
+  try {
+    if (navigator.vibrate) navigator.vibrate(pattern);
+  } catch {
+    /* not supported */
   }
 }
 

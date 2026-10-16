@@ -5,11 +5,14 @@
   "type": "module",
   "description": "Chalkboard Rebel: 589 Lines — a one-button detention game for the $589 community.",
   "scripts": {
-    "start": "npx serve -l 5890 .",
-    "test": "node --test tests/unit/ && npx playwright test",
-    "test:unit": "node --test tests/unit/",
+    "start": "node tests/server.mjs 5890",
+    "build": "node tools/build-site.mjs",
+    "test": "node --test tests/unit/*.test.mjs && npx playwright test",
+    "test:unit": "node --test tests/unit/*.test.mjs",
     "test:e2e": "npx playwright test",
     "balance": "node tests/balance.mjs 1000"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
 }

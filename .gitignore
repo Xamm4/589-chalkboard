@@ -3,3 +3,4 @@ test-results/
 playwright-report/
 screenshots/
 .DS_Store
+_site/

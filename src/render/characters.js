@@ -131,8 +131,10 @@ export class MascotView {
   }
 
   update(dt, game, t) {
-    const writingRebel = game.phase === PHASE.PLAY && game.isWritingRebel;
-    const writingPunish = game.phase === PHASE.PLAY && !game.holding;
+    const idle = game.phase === PHASE.IDLE;
+    const idleWrite = idle && game.teacher.state === T.READING;
+    const writingRebel = (game.phase === PHASE.PLAY && game.isWritingRebel) || idleWrite;
+    const writingPunish = (game.phase === PHASE.PLAY && !game.holding) || (idle && !idleWrite);
     const caught = game.phase === PHASE.CAUGHT;
     const over = game.phase === PHASE.OVER || (game.phase === PHASE.RESULTS && !game.won);
     const win = game.phase === PHASE.WIN;

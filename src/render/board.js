@@ -191,7 +191,7 @@ export class BoardRenderer {
     for (const s of board.smudges) {
       for (let r = 0; r < s.span; r++) {
         const len = s.kind === 'erase' ? Math.max(60, 330 * (s.progress ?? 1)) : 340;
-        this.swirl(ctx, ROWS.left - 4, rowTop(s.row + r) + 15, len, s.seed * 13 + r, s.kind === 'erase' ? 0.08 : 0.055);
+        this.swirl(ctx, ROWS.left - 4, rowTop(s.row + r) + 15, len, s.seed * 13 + r, s.kind === 'erase' ? 0.075 : 0.045);
       }
     }
     for (const line of board.lines) this.drawLine(ctx, line, line.text.length);
