@@ -323,6 +323,17 @@ export class BoardRenderer {
     ctx.restore();
     if (!q && !done) return;
     const total = Math.max(q, done);
+    if (q && done < q && game.phase === 'play' && game.dayLeft < 12) {
+      // running out of time: the tally throbs
+      const pulse = 0.5 + 0.5 * Math.sin(game.time * 9);
+      ctx.save();
+      ctx.strokeStyle = `rgba(255,130,110,${0.45 + pulse * 0.5})`;
+      ctx.lineWidth = 2.5;
+      ctx.beginPath();
+      ctx.ellipse(x0 + 18, yb - 12, 30 + pulse * 3, 19 + pulse * 2, 0, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+    }
     ctx.strokeStyle = '#eef3ea';
     for (let i = 0; i < total; i++) {
       const group = Math.floor(i / 5);

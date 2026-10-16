@@ -797,9 +797,16 @@ body {
 }
 .btn-overtime {
   flex: none;
-  width: 190px;
-  font-size: 26px;
+  width: 168px;
+  font-size: 24px;
+  line-height: 1.05;
+  padding: 12px 8px 8px;
   background: linear-gradient(#e2c6ff, #b07cff);
+}
+.res-actions.with-ot .btn-play {
+  font-size: 36px;
+  white-space: nowrap;
+  padding: 18px 10px 12px;
 }
 .res-row {
   display: grid;

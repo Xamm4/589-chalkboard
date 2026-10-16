@@ -109,7 +109,9 @@ export class UI {
       bar.style.transition = '';
       bar.style.width = `${Math.min(100, (rec.lifetimeAfter / goal) * 100)}%`;
     });
-    $('btn-overtime').hidden = !(s.win && !s.overtime);
+    const ot = s.win && !s.overtime;
+    $('btn-overtime').hidden = !ot;
+    $('btn-overtime').closest('.res-actions').classList.toggle('with-ot', ot);
     this.show('results');
   }
 

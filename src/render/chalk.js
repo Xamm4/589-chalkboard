@@ -82,6 +82,11 @@ export function layoutText(text, font, breakAt = -1, indent = 18) {
   return res;
 }
 
+// Fonts can finish loading after the first layout; measurements must then be redone.
+export function clearLayoutCache() {
+  layoutCache.clear();
+}
+
 export function fitFontSize(text, maxWidth, base = REBEL_SIZE) {
   measureCtx ??= document.createElement('canvas').getContext('2d');
   measureCtx.font = rebelFont(base);

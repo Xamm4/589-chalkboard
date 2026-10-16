@@ -310,6 +310,10 @@ export class Renderer {
     }
     this.updateCaughtFx(game);
     this.updateTutorial(dt, game);
+    if (game.phase === PHASE.PLAY && game.quota && game.punishToday < game.quota && game.dayLeft < 12 && this.quotaWarned !== game.dayIndex) {
+      this.quotaWarned = game.dayIndex;
+      fx.text(`PUNISHMENT ${game.punishToday}/${game.quota}! LET GO TO WRITE IT`, W / 2 - 20, PUNISH.top - 20, { size: 19, color: '#ffb4a8', max: 2.4, vy: -10 });
+    }
     // Greed tension: the screen edges throb red while you hold through a tell.
     let danger = 0;
     if (game.phase === PHASE.PLAY && game.isHoldingRebel && !game.blind) {
@@ -555,10 +559,10 @@ export class Renderer {
     const k = n - left; // 0 → 1 within each second
     const s = 1.5 - Math.min(1, k * 4) * 0.5;
     ctx.save();
-    ctx.translate(484, 186);
+    ctx.translate(484, 100);
     ctx.scale(s, s);
-    ctx.globalAlpha = 1 - k * 0.6;
-    ctx.font = `46px ${FONTS.display}`;
+    ctx.globalAlpha = 1 - k * 0.5;
+    ctx.font = `50px ${FONTS.display}`;
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
     ctx.lineWidth = 8;

@@ -6,6 +6,7 @@ import { T } from './teacher.js';
 import { Renderer } from './render/renderer.js';
 import { loadAssets } from './render/assets.js';
 import { renderMemeBoard } from './render/cards.js';
+import { clearLayoutCache } from './render/chalk.js';
 import { Sound } from './audio.js';
 import { Storage } from './storage.js';
 import { UI } from './ui.js';
@@ -61,6 +62,12 @@ async function boot() {
   if (window.ResizeObserver) new ResizeObserver(resize).observe(stage);
   else window.addEventListener('resize', resize);
   window.addEventListener('orientationchange', () => setTimeout(resize, 120));
+  if (document.fonts && document.fonts.addEventListener) {
+    document.fonts.addEventListener('loadingdone', () => {
+      clearLayoutCache();
+      resize();
+    });
+  }
   applyGolden();
   ui.setTitleStats(store.data, CONFIG.lifetimeGoal);
   ui.show('title');
