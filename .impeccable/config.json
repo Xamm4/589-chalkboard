@@ -1,0 +1,38 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "bounce-easing",
+        "value": "cubic-bezier(0.2, 1.6, 0.4, 1)",
+        "createdAt": "2026-10-16T02:35:14.310Z",
+        "reason": "Claude: rubber-stamp slam overshoot on the results/unlock banners, matching the canvas stamp banners; the brief asks for juicy squash-and-stretch cartoon motion"
+      },
+      {
+        "rule": "bounce-easing",
+        "value": "wobble",
+        "createdAt": "2026-10-16T02:35:52.929Z",
+        "reason": "Claude: false positive by keyframe name; wobble is a gentle ease-in-out 2deg sway on the logo with no bounce"
+      },
+      {
+        "rule": "low-contrast",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-16T02:35:52.946Z",
+        "reason": "Claude: only hits are the orange PLAY/RESUME/GOT IT/PLAY AGAIN/SHINY buttons: cream display text with a 3px solid black outline; legibility comes from the halo (cream/black ~18:1, black/orange ~8:1), the outlined-text case WCAG 1.4.3 allows; style requested by the brief (orange PLAY, black outlines)"
+      },
+      {
+        "rule": "clipped-overflow-container",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-10-16T02:35:52.959Z",
+        "reason": "Claude: full-viewport game: html/body hide overflow to stop page scroll and rubber-banding, #frame clips the letterboxed 540x960 game; every overlay lives inside the frame by design, nothing needs to escape"
+      }
+    ]
+  }
+}

@@ -171,7 +171,8 @@ body {
   outline-offset: 4px;
 }
 .btn-play {
-  background: linear-gradient(#ffa040, var(--orange) 55%, var(--orange-2));
+  background-color: var(--orange);
+  background-image: linear-gradient(#ffa040, var(--orange) 55%, var(--orange-2));
   color: #fffaf0;
   font-size: 54px;
   padding: 22px 30px 14px;
@@ -213,7 +214,8 @@ body {
   display: block;
 }
 .btn-x {
-  background: linear-gradient(#2b2b33, #0f0f12);
+  background-color: #16161b;
+  background-image: linear-gradient(#2b2b33, #0f0f12);
   color: #fff;
 }
 .btn-link {
@@ -325,9 +327,10 @@ body {
 }
 #loading-fill {
   height: 100%;
-  width: 0;
+  width: 100%;
+  transform: translateX(-100%);
   background: var(--chalk);
-  transition: width 0.2s;
+  transition: transform 0.2s ease-out;
 }
 .loading-note {
   font-family: var(--hand);
@@ -482,10 +485,11 @@ body {
 }
 .meter-fill {
   height: 100%;
-  width: 0%;
+  width: 100%;
+  transform: translateX(-100%);
   border-radius: 6px;
   background: repeating-linear-gradient(-45deg, var(--gold) 0 10px, #ffbf00 10px 20px);
-  transition: width 1s cubic-bezier(0.2, 0.8, 0.2, 1);
+  transition: transform 1s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 .lifetime-note {
   font-family: var(--hand);
@@ -625,7 +629,7 @@ body {
 .howto-text {
   font-family: var(--hand);
   font-size: 23px;
-  line-height: 1.12;
+  line-height: 1.3;
   color: var(--cream);
 }
 .howto-text b {
@@ -639,7 +643,7 @@ body {
   padding: 0 6px 0 26px;
   font-family: var(--hand);
   font-size: 20px;
-  line-height: 1.25;
+  line-height: 1.35;
   color: #c9d4ef;
 }
 .howto-tips b {
@@ -858,7 +862,7 @@ body {
   border: 6px solid #9a6a3c;
   border-radius: 10px;
   padding: 14px 6px;
-  text-shadow: 0 0 10px rgba(255, 200, 60, 0.7);
+  text-shadow: 0 2px 0 rgba(0, 0, 0, 0.35);
 }
 
 /* ------------------------------------------------------------ toast */

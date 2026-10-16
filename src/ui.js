@@ -1,6 +1,8 @@
 // DOM screens: title, how-to, pause, results, unlock, toast. Pure presentation + callbacks.
 
 const $ = (id) => document.getElementById(id);
+// Meters slide a full-width fill in from the left (transform only, no layout).
+const meterShift = (f) => `translateX(${Math.min(100, Math.max(0, f * 100)) - 100}%)`;
 
 export class UI {
   constructor(handlers) {
@@ -63,7 +65,7 @@ export class UI {
   }
 
   setLoading(p) {
-    $('loading-fill').style.width = `${Math.round(p * 100)}%`;
+    $('loading-fill').style.transform = `translateX(${Math.round(p * 100) - 100}%)`;
   }
 
   setMuted(m) {
@@ -76,7 +78,7 @@ export class UI {
     $('t-best').textContent = st.best.toLocaleString('en-US');
     $('t-runs').textContent = String(st.runs);
     $('t-life').textContent = String(Math.min(st.lifetimeLines, 99999));
-    $('t-life-bar').style.width = `${Math.min(100, (st.lifetimeLines / goal) * 100)}%`;
+    $('t-life-bar').style.transform = meterShift(st.lifetimeLines / goal);
     $('t-golden-note').hidden = st.goldenUnlocked;
     $('btn-golden').hidden = !st.goldenUnlocked;
     $('btn-golden').textContent = `GOLDEN CHALK: ${st.goldenOn ? 'ON' : 'OFF'}`;
@@ -104,10 +106,10 @@ export class UI {
     $('res-life-label').textContent = rec.lifetimeAfter >= goal ? 'LIFETIME LINES · GOLDEN CHALK' : `LIFETIME LINES  +${rec.lifetimeAfter - rec.lifetimeBefore}`;
     const bar = $('res-life-bar');
     bar.style.transition = 'none';
-    bar.style.width = `${Math.min(100, (rec.lifetimeBefore / goal) * 100)}%`;
+    bar.style.transform = meterShift(rec.lifetimeBefore / goal);
     requestAnimationFrame(() => {
       bar.style.transition = '';
-      bar.style.width = `${Math.min(100, (rec.lifetimeAfter / goal) * 100)}%`;
+      bar.style.transform = meterShift(rec.lifetimeAfter / goal);
     });
     const ot = s.win && !s.overtime;
     $('btn-overtime').hidden = !ot;
