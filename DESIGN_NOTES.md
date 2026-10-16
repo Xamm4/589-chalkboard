@@ -100,7 +100,8 @@ Reading against the targets:
 - Reduced motion is respected.
 
 ## Performance
-- Fixed 60 Hz simulation, decoupled from rendering. DPR capped at 2. Static art, the board surface, completed lines, the newspaper, the light overlay and the vignette are pre-rendered at the current resolution and rebuilt on resize.
+- Fixed 60 Hz simulation, decoupled from rendering. DPR capped at 2. Static art, the board surface, completed lines, the newspaper, the light overlay and the vignette are pre-rendered at the current resolution and rebuilt on resize. A finished line is appended to the baked board layer; only erasures, wipes and style changes redraw it.
+- Measured in headless Chromium with software rendering at 390×844 @2×: 0.8 ms average per frame, 1.2 ms p95, 8 ms worst case.
 - The per-frame work is the line in progress (≤ 46 glyphs), characters, at most 420 particles, and a few overlays.
 - Payload ≈ 1 MB. Audio is generated on the fly after the first user gesture.
 

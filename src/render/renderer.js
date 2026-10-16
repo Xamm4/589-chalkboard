@@ -469,8 +469,12 @@ export class Renderer {
     }
     const danger = tch.state === T.TELL || tch.state === T.FAKE_TELL || (tch.state === T.LOOKING && !tch.seeing);
     if (danger && game.holding) {
-      const blink = Math.sin(t * 22) > -0.2;
-      if (blink) bubble(ctx, 330, 560, 'LET GO!', 34, '#ff6b5b');
+      const pulse = 1 + Math.abs(Math.sin(t * 14)) * 0.12;
+      ctx.save();
+      ctx.translate(INNER.x + INNER.w / 2, 446);
+      ctx.scale(pulse, pulse);
+      bubble(ctx, 0, 0, 'LET GO!', 40, '#ff6b5b');
+      ctx.restore();
     }
     if (tch.state === T.LOOKING && !game.holding && tch.seeing) {
       bubble(ctx, 300, 560, 'SAFE! KEEP BEHAVING', 18, '#bdf5c4');
