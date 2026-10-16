@@ -35,6 +35,7 @@ export class BoardRenderer {
     this.layer = this.boardLayer(rs);
     this.drawSurface(this.surface.ctx);
     this.version = -1;
+    this.drawnIds = null;
   }
 
   layoutFor(line) {
@@ -197,6 +198,29 @@ export class BoardRenderer {
     for (const line of board.lines) this.drawLine(ctx, line, line.text.length);
     this.version = board.version;
     this.layerGolden = this.goldenChalk;
+    this.drawnIds = board.lines.map((l) => l.id);
+    this.drawnSmudges = board.smudges.length;
+  }
+
+  // Bring the baked layer up to date. A newly finished line is drawn on top of what is
+  // already there (cheap); erasures, wipes and style changes redraw everything.
+  syncLayer(game) {
+    const board = game.board;
+    const ids = this.drawnIds || [];
+    const appendOnly =
+      this.drawnIds !== null &&
+      this.drawnIds !== undefined &&
+      this.layerGolden === this.goldenChalk &&
+      this.drawnSmudges === board.smudges.length &&
+      board.lines.length >= ids.length &&
+      ids.every((id, i) => board.lines[i].id === id);
+    if (!appendOnly) {
+      this.drawLayer(game);
+      return;
+    }
+    for (let i = ids.length; i < board.lines.length; i++) this.drawLine(this.layer.ctx, board.lines[i], board.lines[i].text.length);
+    this.drawnIds = board.lines.map((l) => l.id);
+    this.version = board.version;
   }
 
   // Board-full: freeze the current image and sweep it away.
@@ -222,7 +246,7 @@ export class BoardRenderer {
   }
 
   draw(ctx, game, now, state) {
-    if (this.version !== game.board.version || this.layerGolden !== this.goldenChalk) this.drawLayer(game);
+    if (this.version !== game.board.version || this.layerGolden !== this.goldenChalk) this.syncLayer(game);
     ctx.drawImage(this.layer.c, INNER.x, INNER.y, INNER.w, INNER.h);
 
     const wipe = this.wipeState(now);

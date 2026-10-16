@@ -245,6 +245,7 @@ export class Renderer {
         break;
       case 'runStart':
         this.board.version = -1;
+        this.board.drawnIds = null;
         this.hud.score = 0;
         fx.parts = [];
         fx.texts = [];

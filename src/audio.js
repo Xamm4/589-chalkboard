@@ -332,7 +332,7 @@ const SOUNDS = {
     s.noise({ t, dur: 0.08, freq: 900, q: 0.8, gain: 0.14 });
   },
   chalkPunish(s, t) {
-    s.noise({ t, dur: 0.07, freq: 1500 + Math.random() * 500, q: 1, gain: 0.06 });
+    s.noise({ t, dur: 0.07, freq: 1500 + Math.random() * 500, q: 1, gain: 0.09 });
   },
   line(s, t, o) {
     const base = 660 * Math.pow(2, Math.min(o.streak || 1, 6) / 12);
@@ -384,7 +384,7 @@ const SOUNDS = {
     s.noise({ t: t + 0.12, dur: 0.06, type: 'highpass', freq: 3000, gain: 0.08 });
   },
   lower(s, t) {
-    s.noise({ t, dur: 0.2, type: 'highpass', freq: 1800, freqEnd: 900, q: 0.6, gain: 0.08 });
+    s.noise({ t, dur: 0.2, type: 'highpass', freq: 1800, freqEnd: 900, q: 0.6, gain: 0.13 });
   },
   pageFlip(s, t) {
     s.noise({ t, dur: 0.18, type: 'bandpass', freq: 3000, freqEnd: 1200, q: 0.8, gain: 0.16 });
@@ -456,7 +456,8 @@ const SOUNDS = {
     s.tone({ t: t + 0.02, dur: 0.1, type: 'triangle', freq: 523, gain: 0.06 });
   },
   tick(s, t) {
-    s.noise({ t, dur: 0.02, freq: 2800, q: 8, gain: 0.25 });
+    s.noise({ t, dur: 0.02, freq: 2800, q: 8, gain: 0.45 });
+    s.tone({ t, dur: 0.03, type: 'square', freq: 1400, gain: 0.03 });
   },
   tada(s, t) {
     [523.3, 659.3, 784, 1046.5].forEach((f, i) => s.tone({ t: t + i * 0.12, dur: i === 3 ? 0.9 : 0.2, type: 'triangle', freq: f, gain: 0.18 }));
@@ -497,14 +498,14 @@ const SOUNDS = {
     }
   },
   buzz(s, t) {
-    s.tone({ t, dur: 1.2, type: 'sawtooth', freq: 210, freqEnd: 240, gain: 0.04, filter: 800, q: 3, vibrato: 25 });
+    s.tone({ t, dur: 1.2, type: 'sawtooth', freq: 210, freqEnd: 240, gain: 0.08, filter: 800, q: 3, vibrato: 25 });
   },
   paper(s, t) {
-    s.noise({ t, dur: 0.12, type: 'bandpass', freq: 2500, q: 1, gain: 0.12 });
+    s.noise({ t, dur: 0.12, type: 'bandpass', freq: 2500, q: 1, gain: 0.2 });
     s.tone({ t: t + 0.05, dur: 0.15, type: 'triangle', freq: 880, freqEnd: 1320, gain: 0.06 });
   },
   whoosh(s, t) {
-    s.noise({ t, dur: 0.8, freq: 500, freqEnd: 1800, q: 1.2, gain: 0.22 });
+    s.noise({ t, dur: 0.8, freq: 500, freqEnd: 1800, q: 0.9, gain: 0.45 });
   },
   tear(s, t) {
     for (let i = 0; i < 6; i++) s.noise({ t: t + i * 0.035, dur: 0.05, type: 'highpass', freq: 1400 + Math.random() * 1500, gain: 0.14 });
@@ -514,3 +515,4 @@ const SOUNDS = {
     s.tone({ t: t + 0.03, dur: 0.06, type: 'triangle', freq: 1320, gain: 0.07 });
   },
 };
+export const __SOUNDS = SOUNDS; // exposed for the offline audio test

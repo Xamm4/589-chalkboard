@@ -112,3 +112,47 @@ test('title, how-to and pause screens are reachable by keyboard', async ({ page 
   await expect(page.locator('#pause')).not.toHaveClass(/show/);
   expect(errors).toEqual([]);
 });
+
+test('every synthesized sound renders offline without errors, silence or clipping', async ({ page }) => {
+  await page.goto('/?seed=1');
+  await page.waitForSelector('#title.show');
+  const res = await page.evaluate(async () => {
+    const { __SOUNDS: SOUNDS, Sound } = await import('/src/audio.js');
+    const { CONFIG } = await import('/src/config.js');
+    const out = {};
+    for (const name of Object.keys(SOUNDS)) {
+      const sr = 22050;
+      const oc = new OfflineAudioContext(1, sr * 5, sr);
+      const s = new Sound(CONFIG);
+      // same chain as the game: sfx → compressor → master → out
+      s.ctx = oc;
+      s.sfx = oc.createGain();
+      const comp = oc.createDynamicsCompressor();
+      comp.threshold.value = -14;
+      comp.ratio.value = 4;
+      const master = oc.createGain();
+      master.gain.value = CONFIG.audio.master;
+      s.sfx.connect(comp);
+      comp.connect(master);
+      master.connect(oc.destination);
+      s.noiseBuf = oc.createBuffer(1, sr * 2, sr);
+      const d = s.noiseBuf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      try {
+        SOUNDS[name](s, 0.05, { streak: 3, golden: true, fast: true, long: true });
+        const ch = (await oc.startRendering()).getChannelData(0);
+        let peak = 0;
+        for (let i = 0; i < ch.length; i++) peak = Math.max(peak, Math.abs(ch[i]));
+        out[name] = peak;
+      } catch (e) {
+        out[name] = `error: ${e.message}`;
+      }
+    }
+    return out;
+  });
+  for (const [name, peak] of Object.entries(res)) {
+    expect(typeof peak, `${name}: ${peak}`).toBe('number');
+    expect(peak, `${name} is audible`).toBeGreaterThan(0.01);
+    expect(peak, `${name} does not clip`).toBeLessThan(1);
+  }
+});
